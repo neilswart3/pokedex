@@ -1,113 +1,205 @@
-import Image from "next/image";
+'use client';
+
+import { Box, Card, CardHeader, Heading, Image, Stack } from '@chakra-ui/react';
+import Case from 'case';
+import Link from 'next/link';
+import { useCallback, useEffect, useReducer } from 'react';
+
+enum PokemonActionType {
+  Fetch_Complete = 'Fetch_Complete',
+  Fetch_Loading = 'Fetch_Loading',
+}
+
+interface PokemonAction {
+  type: PokemonActionType;
+  payload: any;
+}
+
+interface PokemonListItem {
+  name: string;
+  url: string;
+}
+
+interface PokemonState {
+  init: boolean;
+  data: null | PokemonListItem[];
+  loading: boolean;
+  error: null | string;
+}
+
+const initPokemonState = {
+  init: false,
+  data: null,
+  loading: false,
+  error: null,
+};
+
+const getId = (url: string) => url.split('/').filter(Boolean).at(-1) as string;
+
+const getImageSrc = (url: string) => {
+  const id = getId(url);
+  const base =
+    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon';
+
+  const applyUrl = (
+    path: string,
+    id: string,
+    type: 'jpg' | 'gif' | 'svg' | 'png'
+  ) => `${base}/${path}/${id}.${type}`;
+
+  return {
+    svg: applyUrl('other/dream-world', id, 'svg'),
+    showdown: applyUrl('other/showdown', id, 'gif'),
+    icon: applyUrl('versions/generation-vi/x-y', id, 'png'),
+  };
+};
+
+const pokemonReducer = (
+  state: PokemonState,
+  { payload, type }: PokemonAction
+) => {
+  switch (type) {
+    case PokemonActionType.Fetch_Complete:
+      return {
+        ...state,
+        loading: false,
+        data: payload.results,
+      };
+
+    case PokemonActionType.Fetch_Loading:
+      return {
+        ...state,
+        loading: true,
+      };
+    default:
+      return state;
+  }
+};
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+  const [{ init, data, loading, error }, dispatch] = useReducer(
+    pokemonReducer,
+    initPokemonState
   );
+
+  const handleFetchPokemon = useCallback(async () => {
+    try {
+      dispatch({ payload: '', type: PokemonActionType.Fetch_Loading });
+
+      const response = await fetch(
+        'https://pokeapi.co/api/v2/pokemon?limit=151'
+      );
+      const data = await response.json();
+
+      dispatch({ payload: data, type: PokemonActionType.Fetch_Complete });
+    } catch (error) {}
+  }, []);
+
+  useEffect(() => {
+    if (!data && !loading && !error) handleFetchPokemon();
+  }, [data, error, handleFetchPokemon, loading]);
+
+  return (
+    <Stack gap={3} p={8} backgroundColor="#F0F0F5">
+      {data?.length &&
+        data?.map(({ name, url }: PokemonListItem) => (
+          <Card
+            as={Link}
+            href={`/${getId(url)}`}
+            key={name}
+            position="relative"
+            borderRadius="full"
+            _hover={{
+              backgroundColor: 'red.500',
+              color: 'white',
+            }}
+          >
+            <Stack flexDir="row" alignItems="center" gap={3}>
+              <Box
+                display="inline-flex"
+                alignItems="center"
+                justifyContent="center"
+                w="42px"
+                h="42px"
+              >
+                <Box
+                  as="span"
+                  display="inline-flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  h={6}
+                  w={6}
+                >
+                  <Image
+                    src={getImageSrc(url).icon}
+                    alt={name}
+                    maxH="100%"
+                    w="auto"
+                  />
+                </Box>
+              </Box>
+              <CardHeader display="flex" flex={1} gap={12} h="100%" p={0}>
+                <span>#{`${1000 + parseInt(getId(url))}`.slice(1)}</span>
+                <span>{Case.title(name)}</span>
+              </CardHeader>
+            </Stack>
+          </Card>
+        ))}
+    </Stack>
+  );
+
+  //   return (
+  //     <Box
+  //       p={6}
+  //       display="grid"
+  //       gridTemplateColumns="repeat(auto-fit, minmax(10rem, 1fr))"
+  //       gap={6}
+  //     >
+  //       {/* {data?.length &&
+  //         data?.map(({ name, url }: PokemonListItem) => (
+  //           <Box
+  //             key={name}
+  //             position="relative"
+  //             display="flex"
+  //             flexDir="column"
+  //             justifyContent="flex-end"
+  //             p={6}
+  //           >
+  //             <Card
+  //               position="absolute"
+  //               left={0}
+  //               bottom={0}
+  //               h="50%"
+  //               w="100%"
+  //               p={6}
+  //             />
+  //             <Stack
+  //               position="relative"
+  //               alignItems="center"
+  //               justifyContent="end"
+  //               gap={6}
+  //             >
+  //               <Image
+  //                 src={getImageSrc(url).svg}
+  //                 alt={name}
+  //                 maxH="100%"
+  //                 w="auto"
+  //               />
+  //               <Heading
+  //                 display="flex"
+  //                 justifyContent="space-between"
+  //                 as="h4"
+  //                 size="md"
+  //                 w="100%"
+  //                 gap={4}
+  //                 p={0}
+  //               >
+  //                 <span>#{getId(url)}</span>
+  //                 <span>{Case.title(name)}</span>
+  //               </Heading>
+  //             </Stack>
+  //           </Box>
+  //         ))} */}
+  //     </Box>
+  //   );
 }
