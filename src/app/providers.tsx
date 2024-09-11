@@ -1,13 +1,12 @@
-"use client";
+import { PokemonProvider } from '@/context';
+// import { useRouter } from 'next/router';
+import { PropsWithChildren } from 'react';
 
-import { CacheProvider } from "@chakra-ui/next-js";
-import { ChakraProvider } from "@chakra-ui/react";
-import { PropsWithChildren } from "react";
+export async function Providers({ children }: PropsWithChildren) {
+  //   const router = useRouter();
 
-export function Providers({ children }: PropsWithChildren) {
-  return (
-    <CacheProvider>
-      <ChakraProvider>{children}</ChakraProvider>
-    </CacheProvider>
-  );
+  const data = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+  const pokemonData = await data.json();
+
+  return <PokemonProvider value={pokemonData}>{children}</PokemonProvider>;
 }
