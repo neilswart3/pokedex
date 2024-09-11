@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
-import Stack from '.';
+import { Stack } from '.';
 
 const meta: Meta = {
   title: 'Atoms/Stack',
