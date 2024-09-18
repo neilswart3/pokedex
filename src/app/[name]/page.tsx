@@ -15,15 +15,18 @@ export default async function PokemonPage({
   const src = getPokemonImgSrc(id);
 
   return (
-    <Stack className="items-center gap-4 p-4">
-      <h1 className="text-3xl font-bold">{Case.title(params.name)}</h1>
+    <>
+      <Stack className="items-center gap-4 p-4">
+        <h1 className="text-3xl font-bold">{Case.title(params.name)}</h1>
 
-      <Image
-        src={src.showdown}
-        alt={pokemonData.name}
-        width={100}
-        height={100}
-      />
-    </Stack>
+        <Image
+          src={src.showdown}
+          alt={pokemonData.name}
+          width={100}
+          height={100}
+        />
+      </Stack>
+      <pre>{JSON.stringify(pokemonData, null, 2)}</pre>
+    </>
   );
 }

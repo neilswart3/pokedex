@@ -11,6 +11,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.5",
     "case": "^1.6.3",
     "classnames": "^2.5.1",
     "framer-motion": "^11.4.0",
@@ -36,6 +37,7 @@
     "eslint-config-next": "14.2.7",
     "eslint-plugin-storybook": "^0.8.0",
     "postcss": "^8",
+    "postcss-import": "^16.1.0",
     "storybook": "^8.2.9",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

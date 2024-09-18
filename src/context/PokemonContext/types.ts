@@ -1,8 +1,19 @@
 import { Dispatch, Reducer } from 'react';
 
+export interface PokemonType {
+  name: string;
+  url: string;
+}
+
+export interface PokemonTypeItem {
+  slot: `${number}`;
+  type: PokemonType;
+}
+
 export interface PokemonListItem {
   name: string;
   url: string;
+  types?: PokemonTypeItem[];
 }
 
 export interface PokemonListData {
@@ -20,6 +31,7 @@ export interface PokemonState {
 
 export enum PokemonActionType {
   FETCHED_POKEMON = 'FETCHED_POKEMON',
+  UPDATE_POKEMON = 'UPDATE_POKEMON',
   LOADING = 'LOADING',
   ERROR = 'ERROR',
 }
@@ -27,6 +39,11 @@ export enum PokemonActionType {
 interface FetchingPokemonAction {
   type: PokemonActionType.FETCHED_POKEMON;
   payload: { data: PokemonListData };
+}
+
+interface UpdatePokemonAction {
+  type: PokemonActionType.UPDATE_POKEMON;
+  payload: { data: PokemonListItem };
 }
 
 interface LoadingAction {
@@ -39,7 +56,11 @@ interface ErrorAction {
   payload: { error: string };
 }
 
-export type PokemonAction = FetchingPokemonAction | LoadingAction | ErrorAction;
+export type PokemonAction =
+  | FetchingPokemonAction
+  | UpdatePokemonAction
+  | LoadingAction
+  | ErrorAction;
 export type PokemonReducer = Reducer<PokemonState, PokemonAction>;
 
 export type UsePokemonResult = [
