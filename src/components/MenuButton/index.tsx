@@ -1,10 +1,14 @@
 import { IconButton } from '@/atoms';
+import { CardColorsItem } from '@/types';
 import { Bars3Icon } from '@heroicons/react/16/solid';
 import classNames from 'classnames';
 
-interface Props {}
+interface Props {
+  colors: CardColorsItem;
+  light?: boolean;
+}
 
-export const MenuButton: React.FC<Props> = (props) => (
+export const MenuButton: React.FC<Props> = ({ colors, light }) => (
   <span
     className={classNames(
       'relative',
@@ -16,9 +20,9 @@ export const MenuButton: React.FC<Props> = (props) => (
       'before:absolute',
       'before:h-80',
       'before:w-80',
-      'before:bg-gray-200',
       'before:rounded-full',
       'before:z-[-1]',
+      colors.light.before,
     )}
   >
     <span
@@ -27,10 +31,10 @@ export const MenuButton: React.FC<Props> = (props) => (
         'flex',
         'items-center',
         'justify-center',
-        'bg-gray-100',
         'h-6',
         'w-96',
         'z-[-1]',
+        colors.main.root,
       )}
     />
     <IconButton
@@ -45,17 +49,17 @@ export const MenuButton: React.FC<Props> = (props) => (
         'before:absolute',
         'before:h-36',
         'before:w-36',
-        'before:bg-gray-100',
         'before:rounded-full',
         'before:z-[-1]',
+        colors.main.before,
 
         'after:content-[""]',
         'after:absolute',
         'after:h-24',
         'after:w-24',
-        'after:bg-gray-200',
         'after:rounded-full',
         'after:z-[-1]',
+        colors.light.after,
       )}
     >
       <Bars3Icon />

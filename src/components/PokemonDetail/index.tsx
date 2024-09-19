@@ -5,9 +5,8 @@ import { PokemonItemDataResponse } from '@/types';
 import Case from 'case';
 import { PokemonImage } from '@/components';
 import { usePokemon } from '@/context';
-import { useEffect, useMemo, useRef } from 'react';
-import { findPokemon, getPokemonBgColor } from '@/utils';
-import { CARD_COLORS } from '@/constants';
+import { useEffect, useRef } from 'react';
+import { findPokemon } from '@/utils';
 
 interface Props {
   data: PokemonItemDataResponse;
@@ -22,8 +21,6 @@ export const PokemonDetail: React.FC<Props> = ({ data: passedData }) => {
     ...(passedData || {}),
   };
   const image = pokemon?.sprites?.other?.dream_world?.front_default;
-
-  const bgColor = getPokemonBgColor(pokemon.types);
 
   useEffect(() => {
     if (
@@ -41,10 +38,10 @@ export const PokemonDetail: React.FC<Props> = ({ data: passedData }) => {
     <Stack className="gap-16">
       <Stack className="gap-4">
         <Stack flow="row" className="items-center justify-between gap-2">
-          <h1 className="text-4xl">
+          <h1 className="text-4xl text-white">
             <strong>{Case.title(pokemon.name)}</strong>
           </h1>
-          <h4 className="text-xl">
+          <h4 className="text-xl text-white">
             <strong>#{`${1000 + pokemon.id}`.slice(1)}</strong>
           </h4>
         </Stack>
@@ -53,9 +50,9 @@ export const PokemonDetail: React.FC<Props> = ({ data: passedData }) => {
           <Stack flow="row" className="gap-2">
             {pokemon.types?.map(({ type }) => (
               <Chip
-                key={`${name}-${type.name}`}
+                key={`${pokemon.name}-${type.name}`}
                 label={type.name}
-                //   bgLight
+                bgLight
                 textLight
               />
             ))}

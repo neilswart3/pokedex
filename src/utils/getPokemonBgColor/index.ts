@@ -1,7 +1,11 @@
 import { CARD_COLORS } from '@/constants';
-import { PokemonTypeItem } from '@/types';
+import { CardColorsItem, PokemonTypeItem } from '@/types';
 
-export const getPokemonBgColor = (types: PokemonTypeItem[]) => {
+export const getPokemonBgColor = (
+  types: PokemonTypeItem[] | undefined,
+): CardColorsItem => {
+  if (!types?.length) return CARD_COLORS.default;
+
   const typeStrings = types.map(({ type }) => type.name);
   const type =
     typeStrings.includes('fairy') && typeStrings.indexOf('fairy') > 0

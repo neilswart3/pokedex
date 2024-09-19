@@ -20,7 +20,7 @@ export const PokemonListCard: React.FC<Props> = ({ name, url, types }) => {
         rounded
         className={classNames(
           'h-full p-4 relative z-0 overflow-hidden',
-          backgroundColor.main,
+          backgroundColor.main.root,
         )}
       >
         <FetchOnScroll name={name} url={url} />
@@ -46,7 +46,10 @@ export const PokemonListCard: React.FC<Props> = ({ name, url, types }) => {
             <PokemonImage
               src={src.svg}
               alt={name}
-              backdrop={[backgroundColor.before, backgroundColor.after]}
+              backdrop={[
+                backgroundColor.light.before,
+                backgroundColor.light.after,
+              ]}
             />
           </Stack>
         </Stack>
