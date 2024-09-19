@@ -2,24 +2,26 @@ import { BaseComponentProps } from '@/types';
 import classNames from 'classnames';
 import { PropsWithChildren } from 'react';
 
-export interface CardProps extends PropsWithChildren, BaseComponentProps {}
+export interface CardProps extends PropsWithChildren, BaseComponentProps {
+  rounded?: boolean;
+}
 
 export const Card: React.FC<CardProps> = ({
   as: Tag = 'div',
   children,
   className,
+  rounded = false,
   ...props
-}) => {
-  return (
-    <Tag
-      {...props}
-      className={classNames(
-        'Card',
-        'flex flex-col relative shadow-md',
-        className,
-      )}
-    >
-      {children}
-    </Tag>
-  );
-};
+}) => (
+  <Tag
+    {...props}
+    className={classNames(
+      'Card',
+      'flex flex-col relative shadow-md',
+      rounded && 'rounded-3xl',
+      className,
+    )}
+  >
+    {children}
+  </Tag>
+);

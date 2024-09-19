@@ -9,5 +9,3 @@ export const CardSubHeader: React.FC<Props> = ({
   children,
   className,
 }) => <Tag className={classNames('CardSubHeader', className)}>{children}</Tag>;
-
-export default CardSubHeader;

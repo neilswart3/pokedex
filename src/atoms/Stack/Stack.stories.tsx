@@ -9,7 +9,9 @@ const meta: Meta = {
       <div>something 2</div>
     </Stack>
   ),
-  parameters: {},
+  parameters: {
+    layout: 'centered',
+  },
   tags: ['autodocs'],
   args: {},
 };
@@ -18,5 +20,8 @@ export default meta;
 type Story = StoryObj<typeof Stack>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    flow: 'col',
+    reverse: false,
+  },
 };

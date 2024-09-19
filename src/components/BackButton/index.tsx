@@ -2,19 +2,17 @@
 
 import { IconButton } from '@/atoms';
 import { ArrowLeftIcon } from '@heroicons/react/20/solid';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export const BackButton: React.FC = () => {
   const pathName = usePathname();
+  const router = useRouter();
 
   if (pathName === '/') return null;
 
   return (
-    <Link href="/">
-      <IconButton>
-        <ArrowLeftIcon />
-      </IconButton>
-    </Link>
+    <IconButton onClick={router.back}>
+      <ArrowLeftIcon />
+    </IconButton>
   );
 };
