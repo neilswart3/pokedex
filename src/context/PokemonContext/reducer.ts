@@ -1,10 +1,6 @@
-import {
-  PokemonAction,
-  PokemonActionType,
-  PokemonListData,
-  PokemonListItem,
-  PokemonState,
-} from './types';
+import { PokemonListItem } from '@/types';
+import { PokemonAction, PokemonActionType, PokemonState } from './types';
+import { findPokemon } from '@/utils';
 
 const pokemonReducer = (
   state: PokemonState,
@@ -16,30 +12,37 @@ const pokemonReducer = (
         ...state,
         loading: payload.loading,
       };
+
     case PokemonActionType.FETCHED_POKEMON:
+      const {
+        data: { results: data, ...meta },
+      } = payload;
+
       return {
         ...state,
         loading: false,
-        data: payload.data,
+        data,
+        meta,
       };
-    case PokemonActionType.UPDATE_POKEMON:
-      const dataIndex = state?.data?.results.indexOf(
-        state?.data?.results?.find(
-          (item) => item.name === payload.data.name,
-        ) as PokemonListItem,
+    case PokemonActionType.UPDATE_POKEMON_ITEM:
+      const dataIndex = state?.data?.indexOf(
+        findPokemon(state?.data, payload.data.name) as PokemonListItem,
       );
 
-      const results = state?.data?.results || [];
+      const results = state?.data || [];
       const types = payload?.data?.types;
+      const id = payload?.data?.id;
 
       results[dataIndex as number] = {
         ...results[dataIndex as number],
+        ...(id ? { id } : {}),
         ...(types ? { types } : {}),
       };
 
       return {
         ...state,
-        data: { ...state.data, results } as PokemonListData,
+        loading: false,
+        data: results as PokemonListItem[],
       };
     case PokemonActionType.ERROR:
       return {

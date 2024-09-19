@@ -11,14 +11,16 @@ import React, {
 import pokemonReducer from './reducer';
 import {
   PokemonActionType,
-  PokemonListData,
   PokemonReducer,
   PokemonState,
   UsePokemonResult,
 } from './types';
+import { PokemonRepository } from '@/services';
+import { PokemonItemDataResponse, PokemonListDataResponse } from '@/types';
 
 const initPokemonState: PokemonState = {
   data: null,
+  meta: null,
   loading: false,
   error: null,
 };
@@ -29,7 +31,7 @@ const PokemonDispatchContext = createContext<
 >(() => initPokemonState);
 
 interface Props extends PropsWithChildren {
-  value?: PokemonListData | null;
+  value?: PokemonListDataResponse | null;
 }
 
 export const PokemonProvider: React.FC<Props> = ({
@@ -38,7 +40,17 @@ export const PokemonProvider: React.FC<Props> = ({
 }) => {
   const [pokemon, dispatch] = useReducer<PokemonReducer>(
     pokemonReducer,
-    value ? { ...initPokemonState, data: value } : initPokemonState,
+    value
+      ? {
+          ...initPokemonState,
+          data: value.results,
+          meta: {
+            count: value.count,
+            next: value.next,
+            previous: value.previous,
+          },
+        }
+      : initPokemonState,
   );
 
   return (
@@ -54,28 +66,57 @@ export const usePokemon = (): UsePokemonResult => {
   const pokemon = useContext(PokemonContext);
   const dispatch = useContext(PokemonDispatchContext);
 
-  //   const handleFetchPokemon = useCallback(async (): Promise<void> => {
-  //     console.log('handleFetchPokemon');
-  //     try {
-  //       dispatch({ type: PokemonActionType.LOADING, payload: { loading: true } });
+  const updatePokemonItem = (data: PokemonItemDataResponse): void => {
+    dispatch({ type: PokemonActionType.LOADING, payload: { loading: true } });
+    dispatch({
+      type: PokemonActionType.UPDATE_POKEMON_ITEM,
+      payload: { data },
+    });
+  };
 
-  //       dispatch({
-  //         type: PokemonActionType.FETCHED_POKEMON,
-  //         payload: { data: [] },
-  //       });
-  //     } catch (error) {
-  //       console.error(error);
+  const fetchPokemonItem = async (name: string): Promise<void> => {
+    try {
+      dispatch({ type: PokemonActionType.LOADING, payload: { loading: true } });
 
-  //       dispatch({
-  //         type: PokemonActionType.ERROR,
-  //         payload: { error: (error as Error).message },
-  //       });
-  //     }
-  //   }, [dispatch]);
+      const data = await PokemonRepository.fetchPokemonItem(name);
 
-  //   useEffect(() => {
-  //     handleFetchPokemon();
-  //   }, [handleFetchPokemon]);
+      if (!data) throw new Error('Failed to fetch Pokemon item');
 
-  return [pokemon, { dispatch }];
+      dispatch({
+        type: PokemonActionType.UPDATE_POKEMON_ITEM,
+        payload: { data },
+      });
+    } catch (error) {
+      console.error(error);
+
+      dispatch({
+        type: PokemonActionType.ERROR,
+        payload: { error: (error as Error).message },
+      });
+    }
+  };
+
+  const fetchPokemonList = async (): Promise<void> => {
+    try {
+      dispatch({ type: PokemonActionType.LOADING, payload: { loading: true } });
+
+      const data = await PokemonRepository.fetchPokemonList();
+
+      if (!data) throw new Error('Failed to fetch Pokemon list');
+
+      dispatch({
+        type: PokemonActionType.FETCHED_POKEMON,
+        payload: { data },
+      });
+    } catch (error) {
+      console.error(error);
+
+      dispatch({
+        type: PokemonActionType.ERROR,
+        payload: { error: (error as Error).message },
+      });
+    }
+  };
+
+  return [pokemon, { fetchPokemonList, fetchPokemonItem, updatePokemonItem }];
 };

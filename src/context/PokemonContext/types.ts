@@ -1,49 +1,40 @@
-import { Dispatch, Reducer } from 'react';
-
-export interface PokemonType {
-  name: string;
-  url: string;
-}
-
-export interface PokemonTypeItem {
-  slot: `${number}`;
-  type: PokemonType;
-}
-
-export interface PokemonListItem {
-  name: string;
-  url: string;
-  types?: PokemonTypeItem[];
-}
-
-export interface PokemonListData {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: PokemonListItem[];
-}
+import {
+  PokemonItemDataResponse,
+  PokemonListDataResponse,
+  PokemonListItem,
+  PokemonListMeta,
+} from '@/types';
+import { Reducer } from 'react';
 
 export interface PokemonState {
-  data: PokemonListData | null;
+  data: PokemonListItem[] | null;
+  meta: PokemonListMeta | null;
   loading: boolean;
   error: string | null;
 }
 
 export enum PokemonActionType {
+  FETCH_POKEMON = 'FETCH_POKEMON',
   FETCHED_POKEMON = 'FETCHED_POKEMON',
-  UPDATE_POKEMON = 'UPDATE_POKEMON',
+  UPDATE_POKEMON_ITEM = 'UPDATE_POKEMON_ITEM',
   LOADING = 'LOADING',
   ERROR = 'ERROR',
 }
 
 interface FetchingPokemonAction {
   type: PokemonActionType.FETCHED_POKEMON;
-  payload: { data: PokemonListData };
+  payload: { data: PokemonListDataResponse };
+}
+
+export namespace FetchPokemon {
+  export type Type = PokemonActionType.FETCH_POKEMON;
+  export type Payload = { payload: { name: string } };
+  export type Action = Payload & { type: Type };
 }
 
 interface UpdatePokemonAction {
-  type: PokemonActionType.UPDATE_POKEMON;
-  payload: { data: PokemonListItem };
+  type: PokemonActionType.UPDATE_POKEMON_ITEM;
+  payload: { data: PokemonItemDataResponse };
 }
 
 interface LoadingAction {
@@ -58,12 +49,18 @@ interface ErrorAction {
 
 export type PokemonAction =
   | FetchingPokemonAction
+  | FetchPokemon.Action
   | UpdatePokemonAction
   | LoadingAction
   | ErrorAction;
+
 export type PokemonReducer = Reducer<PokemonState, PokemonAction>;
 
 export type UsePokemonResult = [
   PokemonState,
-  { dispatch: Dispatch<PokemonAction> },
+  {
+    fetchPokemonList: () => Promise<void>;
+    fetchPokemonItem: (name: string) => Promise<void>;
+    updatePokemonItem: (data: PokemonItemDataResponse) => void;
+  },
 ];
