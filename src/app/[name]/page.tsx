@@ -1,4 +1,6 @@
 import { Stack } from '@/atoms';
+import { PokemonDetail } from '@/components';
+import { PokemonRepository } from '@/services';
 import { getPokemonImgSrc } from '@/utils';
 import Case from 'case';
 import Image from 'next/image';
@@ -8,15 +10,20 @@ export default async function PokemonPage({
 }: {
   params: { name: string };
 }) {
-  const data = await fetch(`https://pokeapi.co/api/v2/pokemon/${params.name}`);
-  const pokemonData = await data.json();
+  //   const data = await fetch(`https://pokeapi.co/api/v2/pokemon/${params.name}`);
+  //   const pokemonData = await data.json();
 
-  const id = pokemonData.id;
-  const src = getPokemonImgSrc(id);
+  //   const id = pokemonData.id;
+  //   const src = getPokemonImgSrc(id);
+
+  //   console.log('pokemonData:', pokemonData);
+
+  const data = await PokemonRepository.fetchPokemonItem(params.name);
 
   return (
     <>
-      <Stack className="items-center gap-4 p-4">
+      <PokemonDetail data={data} />
+      {/* <Stack className="items-center gap-4 p-4">
         <h1 className="text-3xl font-bold">{Case.title(params.name)}</h1>
 
         <Image
@@ -25,8 +32,8 @@ export default async function PokemonPage({
           width={100}
           height={100}
         />
-      </Stack>
-      <pre>{JSON.stringify(pokemonData, null, 2)}</pre>
+      </Stack> */}
+      {/* <pre>{JSON.stringify(pokemonData, null, 2)}</pre> */}
     </>
   );
 }

@@ -1,9 +1,9 @@
 import { PokemonProvider } from '@/context';
+import { PokemonRepository } from '@/services';
 import { PropsWithChildren } from 'react';
 
 export async function Providers({ children }: PropsWithChildren) {
-  const data = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
-  const pokemonData = await data.json();
+  const data = await PokemonRepository.fetchPokemonList();
 
-  return <PokemonProvider value={pokemonData}>{children}</PokemonProvider>;
+  return <PokemonProvider value={data}>{children}</PokemonProvider>;
 }

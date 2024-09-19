@@ -6,3 +6,4 @@ export * from './MenuButton';
 export * from './BackButton';
 export * from './PokemonImage';
 export * from './FetchOnScroll';
+export * from './PokemonDetail';
