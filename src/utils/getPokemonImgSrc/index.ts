@@ -15,14 +15,16 @@ const imageKeys = {
 
 type GetPokemonImgSrcResult = Record<keyof typeof imageKeys, string>;
 
-export const getPokemonImgSrc = (id: `${number}`): GetPokemonImgSrcResult => {
+export const getPokemonImgSrc = (
+  id: `${number}` | number,
+): GetPokemonImgSrcResult => {
   const base =
     'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon';
 
   return Object.entries(imageKeys).reduce(
     (acc, [key, { path, type }]) => ({
       ...acc,
-      [key]: `${[base, path, id].join('/')}.${type}`,
+      [key]: `${[base, path, `${id}`].join('/')}.${type}`,
     }),
     {},
   ) as GetPokemonImgSrcResult;

@@ -8,8 +8,13 @@ import { PokemonListItem } from '@/types';
 
 interface Props extends PokemonListItem {}
 
-export const PokemonListCard: React.FC<Props> = ({ name, url, types }) => {
-  const id = getPokemonId(url);
+export const PokemonListCard: React.FC<Props> = ({
+  name,
+  url,
+  types,
+  id: passedId,
+}) => {
+  const id = passedId ?? getPokemonId(url);
   const src = getPokemonImgSrc(id);
 
   const backgroundColor = getPokemonBgColor(types || []);
@@ -23,10 +28,10 @@ export const PokemonListCard: React.FC<Props> = ({ name, url, types }) => {
           backgroundColor.main.root,
         )}
       >
-        <FetchOnScroll name={name} url={url} />
+        <FetchOnScroll id={passedId && `${passedId}`} name={name} url={url} />
         <Stack className="gap-2">
           <CardSubHeader className="text-right opacity-30">
-            <strong>#{`${1000 + parseInt(id)}`.slice(1)}</strong>
+            <strong>#{`${1000 + parseInt(`${id}`)}`.slice(1)}</strong>
           </CardSubHeader>
           <CardHeader className="text-2xl text-white">
             <strong>{Case.title(name)}</strong>
